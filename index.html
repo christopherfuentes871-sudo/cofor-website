@@ -1,15 +1,16 @@
 <!doctype html>
-<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>COFOR | Central Valley Remote Security Surveillance</title>
 
   <style>
     :root{
-      --line:rgba(255,255,255,.11);
-      --line2:rgba(125,211,252,.24);
+      --bg:#000;
+      --panel:#07101a;
+      --panel2:#0b1623;
+      --line:rgba(255,255,255,.12);
       --text:#f4f7fb;
       --muted:#aeb9c8;
       --sky:#7dd3fc;
@@ -23,10 +24,12 @@
       margin:0;
       background:#000;
       color:var(--text);
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      font-family:Arial,Helvetica,sans-serif;
       overflow-x:hidden;
     }
     a{color:inherit;text-decoration:none}
+    .page{position:relative;z-index:2}
+    .container{max-width:1180px;margin:0 auto;padding:0 20px}
 
     .bg-grid{
       position:fixed;
@@ -34,11 +37,10 @@
       z-index:0;
       pointer-events:none;
       background-image:
-        linear-gradient(rgba(125,211,252,.045) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(125,211,252,.045) 1px,transparent 1px);
+        linear-gradient(rgba(125,211,252,.05) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(125,211,252,.05) 1px,transparent 1px);
       background-size:42px 42px;
       opacity:.25;
-      animation:gridDrift 10s linear infinite;
     }
     .bg-glow{
       position:fixed;
@@ -46,13 +48,9 @@
       z-index:0;
       pointer-events:none;
       background:
-        radial-gradient(circle at 18% 0%,rgba(56,189,248,.13),transparent 28%),
-        radial-gradient(circle at 88% 18%,rgba(127,176,234,.09),transparent 31%),
-        radial-gradient(circle at 50% 100%,rgba(56,189,248,.08),transparent 34%);
-    }
-    @keyframes gridDrift{
-      from{transform:translateY(0)}
-      to{transform:translateY(42px)}
+        radial-gradient(circle at 15% 0%,rgba(56,189,248,.16),transparent 28%),
+        radial-gradient(circle at 88% 20%,rgba(127,176,234,.11),transparent 30%),
+        radial-gradient(circle at 50% 100%,rgba(56,189,248,.09),transparent 35%);
     }
 
     @keyframes flipLeftTop{
@@ -72,33 +70,28 @@
       50%{transform:rotate(90deg);fill:#e5e7eb}
     }
 
-    .page{position:relative;z-index:1}
-    .container{max-width:1240px;margin:0 auto;padding:0 22px}
-
     .topbar{
-      border-bottom:1px solid rgba(255,255,255,.08);
-      background:rgba(0,0,0,.58);
+      background:rgba(0,0,0,.72);
+      border-bottom:1px solid var(--line);
       color:#b9c6d5;
       font-size:13px;
-      line-height:1.45;
     }
     .topbar-inner{
       min-height:42px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:18px;
+      gap:14px;
       flex-wrap:wrap;
       padding:8px 0;
     }
-    .top-left{display:flex;gap:20px;flex-wrap:wrap}
-    .status-dot{
-      width:7px;
-      height:7px;
+    .dot{
+      width:8px;
+      height:8px;
       border-radius:50%;
-      display:inline-block;
       background:var(--green);
       box-shadow:0 0 8px var(--green);
+      display:inline-block;
       margin-right:7px;
     }
 
@@ -106,159 +99,149 @@
       position:sticky;
       top:0;
       z-index:20;
-      background:rgba(0,0,0,.82);
-      backdrop-filter:blur(16px);
+      background:rgba(0,0,0,.86);
+      backdrop-filter:blur(14px);
       border-bottom:1px solid var(--line);
     }
     .nav-inner{
-      min-height:92px;
+      min-height:88px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:24px;
-      padding:8px 0;
+      gap:20px;
     }
     .brand{
       display:flex;
       align-items:center;
-      gap:16px;
-      min-width:0;
+      gap:14px;
     }
     .logo{
-      width:132px;
-      overflow:visible;
+      width:112px;
       flex:0 0 auto;
     }
     .brand-name{
-      font-size:28px;
-      font-weight:850;
+      font-size:26px;
+      font-weight:900;
       letter-spacing:.18em;
-      line-height:1;
     }
     .brand-tag{
-      margin-top:7px;
-      font-size:10px;
-      letter-spacing:.34em;
-      text-transform:uppercase;
+      margin-top:5px;
       color:var(--muted);
-      white-space:nowrap;
+      font-size:10px;
+      letter-spacing:.26em;
+      text-transform:uppercase;
     }
     .nav-links{
       display:flex;
-      gap:17px;
-      flex-wrap:wrap;
-      color:#dce4ee;
-      font-size:14px;
+      gap:16px;
       align-items:center;
-      justify-content:flex-end;
+      flex-wrap:wrap;
+      font-size:14px;
+      color:#dce4ee;
     }
     .nav-links a:hover{color:var(--sky)}
     .nav-cta{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-height:42px;
-      padding:0 15px;
-      border-radius:6px;
       background:var(--sky);
       color:#051018;
-      font-weight:850;
+      padding:11px 14px;
+      border-radius:6px;
+      font-weight:800;
     }
 
-    .hero{padding:78px 0 66px}
+    .hero{
+      padding:76px 0 70px;
+    }
     .hero-grid{
       display:grid;
-      grid-template-columns:1fr .92fr;
-      gap:38px;
+      grid-template-columns:1fr .9fr;
+      gap:34px;
       align-items:center;
     }
     .eyebrow{
       display:inline-flex;
       align-items:center;
-      gap:10px;
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid var(--line2);
+      border:1px solid rgba(125,211,252,.28);
       background:rgba(56,189,248,.10);
       color:#e3f8ff;
+      padding:10px 14px;
+      border-radius:999px;
       font-size:13px;
       margin-bottom:22px;
     }
     h1{
-      font-size:clamp(42px,6vw,74px);
-      line-height:.96;
-      letter-spacing:-.045em;
+      font-size:clamp(40px,6vw,72px);
+      line-height:.97;
+      letter-spacing:-.04em;
       margin:0 0 22px;
-      max-width:1040px;
     }
     h1 span,h2 span{color:var(--sky)}
-    .hero p{
-      font-size:18px;
-      line-height:1.72;
-      color:#d4dce8;
+    .hero p,.lead{
+      color:var(--muted);
+      font-size:17px;
+      line-height:1.75;
       margin:0 0 16px;
-      max-width:880px;
     }
-    .hero-actions{
+    .hero p{
+      color:#d4dce8;
+      font-size:18px;
+    }
+    .actions{
+      margin-top:28px;
       display:flex;
       gap:14px;
       flex-wrap:wrap;
-      margin-top:28px;
     }
     .btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      min-height:52px;
-      padding:0 20px;
-      border-radius:8px;
+      min-height:50px;
+      padding:0 18px;
+      border-radius:6px;
       font-weight:850;
       border:1px solid transparent;
-      cursor:pointer;
     }
     .btn-primary{background:var(--sky);color:#041018}
-    .btn-secondary{
-      background:rgba(255,255,255,.045);
-      border-color:var(--line);
-      color:#fff;
-    }
+    .btn-secondary{background:rgba(255,255,255,.045);border-color:var(--line);color:#fff}
 
-    .hero-card{
+    .hero-card,.card,.mini-card,.contact-box,.form-box{
       border:1px solid var(--line);
-      background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.025));
+      background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));
+      border-radius:10px;
+    }
+    .hero-card{padding:20px;box-shadow:0 26px 90px rgba(0,0,0,.42)}
+    .image-box,.slot{
+      border:1px solid rgba(125,211,252,.24);
       border-radius:8px;
-      padding:22px;
-      box-shadow:0 26px 90px rgba(0,0,0,.42);
+      background:linear-gradient(180deg,rgba(12,22,34,.96),rgba(7,13,21,.98));
+      position:relative;
+      overflow:hidden;
     }
     .image-box{
-      border:1px solid rgba(125,211,252,.24);
-      border-radius:10px;
-      min-height:360px;
-      background:
-        linear-gradient(180deg,rgba(6,12,20,.55),rgba(6,12,20,.92)),
-        radial-gradient(circle at 50% 0%,rgba(56,189,248,.18),transparent 38%),
-        #080e17;
+      min-height:340px;
       display:grid;
       place-items:center;
       text-align:center;
       padding:28px;
-      position:relative;
-      overflow:hidden;
     }
-    .image-box:before{
+    .slot{
+      min-height:190px;
+      margin-bottom:16px;
+    }
+    .image-box:before,.slot:before{
       content:"";
       position:absolute;
       inset:0;
       background-image:
-        linear-gradient(rgba(125,211,252,.07) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(125,211,252,.07) 1px,transparent 1px);
-      background-size:20px 20px;
-      opacity:.35;
+        linear-gradient(rgba(125,211,252,.06) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(125,211,252,.06) 1px,transparent 1px);
+      background-size:18px 18px;
+      opacity:.45;
     }
     .image-title{
       position:relative;
       font-size:22px;
-      font-weight:850;
+      font-weight:900;
       color:#e8f7ff;
     }
     .image-sub{
@@ -266,7 +249,37 @@
       margin-top:10px;
       color:#aebcd0;
       line-height:1.55;
-      max-width:390px;
+    }
+    .slot-top{
+      position:relative;
+      min-height:36px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 12px;
+      background:rgba(255,255,255,.03);
+    }
+    .slot-label{
+      font-size:11px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:#def7ff;
+    }
+    .slot-body{
+      position:relative;
+      min-height:154px;
+    }
+    .slot-body:after{
+      content:"";
+      width:55%;
+      max-width:210px;
+      height:2px;
+      background:rgba(125,211,252,.22);
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
     }
 
     .trust-row{
@@ -279,100 +292,331 @@
       border:1px solid var(--line);
       background:rgba(255,255,255,.035);
       border-radius:8px;
-      padding:14px;
+      padding:13px;
     }
     .trust strong{
       display:block;
       color:var(--sky);
-      font-size:16px;
       margin-bottom:4px;
     }
     .trust span{
+      color:var(--muted);
       font-size:13px;
-      color:#aeb9c8;
       line-height:1.4;
     }
 
     .section{
-      padding:76px 0;
+      padding:72px 0;
       border-top:1px solid var(--line);
     }
     .section-head{
       max-width:980px;
-      margin-bottom:32px;
+      margin-bottom:30px;
     }
     .kicker{
       color:var(--sky);
       text-transform:uppercase;
-      letter-spacing:.28em;
+      letter-spacing:.24em;
       font-size:12px;
       font-weight:850;
       margin-bottom:12px;
     }
     h2{
-      font-size:clamp(31px,4.8vw,54px);
-      line-height:1.06;
+      font-size:clamp(30px,4.8vw,52px);
+      line-height:1.07;
       letter-spacing:-.035em;
       margin:0 0 15px;
-      max-width:1080px;
-    }
-    .lead{
-      font-size:17px;
-      line-height:1.75;
-      color:var(--muted);
-      max-width:980px;
-    }
-    .muted{
-      color:var(--muted);
-      line-height:1.7;
-    }
-
-    .grid-2{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:24px;
     }
     .grid-3{
       display:grid;
       grid-template-columns:repeat(3,1fr);
       gap:20px;
     }
-
     .card,.mini-card{
-      border:1px solid var(--line);
-      background:linear-gradient(180deg,rgba(255,255,255,.044),rgba(255,255,255,.022));
-      border-radius:10px;
       padding:20px;
     }
     .card h3,.mini-card h3{
-      font-size:22px;
       margin:0 0 10px;
+      font-size:21px;
     }
     .card p,.mini-card p{
-      margin:0;
       color:var(--muted);
       line-height:1.7;
       font-size:15.5px;
-    }
-    .mini-card strong{
-      display:block;
-      color:#fff;
-      margin-bottom:8px;
+      margin:0;
     }
 
-    .slot{
-      border:1px solid rgba(125,211,252,.22);
-      border-radius:8px;
-      min-height:220px;
-      margin-bottom:16px;
-      background:linear-gradient(180deg,rgba(12,22,34,.96),rgba(7,13,21,.98));
-      position:relative;
-      overflow:hidden;
+    .comparison{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:22px;
     }
-    .slot:before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background-image:
-        linear-gradient(rgba(125,211,252,.055) 1px,transparent
-            </html>            
+    .old{border-color:rgba(239,68,68,.25)}
+    .new{border-color:rgba(34,197,94,.25)}
+    .old h3{color:#fca5a5}
+    .new h3{color:#86efac}
+    .list{
+      display:grid;
+      gap:12px;
+      margin-top:14px;
+    }
+    .list-item{
+      display:flex;
+      gap:10px;
+      color:#d6dfeb;
+      line-height:1.6;
+    }
+    .x{color:#f87171;font-weight:900}
+    .check{color:#4ade80;font-weight:900}
+
+    .process{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:14px;
+    }
+    .step{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.035);
+      border-radius:8px;
+      padding:18px;
+    }
+    .step-num{
+      width:34px;
+      height:34px;
+      border-radius:6px;
+      display:grid;
+      place-items:center;
+      background:rgba(56,189,248,.12);
+      color:var(--sky);
+      font-weight:900;
+      margin-bottom:10px;
+    }
+
+    .contact-layout{
+      display:grid;
+      grid-template-columns:.9fr 1.1fr;
+      gap:24px;
+    }
+    .contact-box,.form-box{
+      padding:28px;
+    }
+    .contact-info{
+      display:grid;
+      gap:12px;
+      margin-top:18px;
+      color:#dae3ee;
+    }
+    .form-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+    .form-field{display:grid;gap:7px}
+    .form-field.full{grid-column:1/-1}
+    label{
+      font-size:13px;
+      color:#d8e6f2;
+      font-weight:800;
+    }
+    input,select,textarea{
+      width:100%;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.32);
+      color:#f4f7fb;
+      border-radius:8px;
+      padding:13px 14px;
+      font:inherit;
+      outline:none;
+    }
+    textarea{min-height:140px;resize:vertical}
+    option{background:#0b121c;color:#f4f7fb}
+    .footer{
+      padding:30px 0 48px;
+      text-align:center;
+      color:#91a4b9;
+      font-size:14px;
+      border-top:1px solid var(--line);
+    }
+
+    @media(max-width:900px){
+      .hero-grid,.comparison,.contact-layout{grid-template-columns:1fr}
+      .grid-3{grid-template-columns:1fr 1fr}
+      .process{grid-template-columns:1fr 1fr}
+      .nav-inner{align-items:flex-start;flex-direction:column}
+    }
+    @media(max-width:650px){
+      .topbar{display:none}
+      .nav-links{display:none}
+      .nav-inner{min-height:82px;flex-direction:row;align-items:center}
+      .brand-name{font-size:22px}
+      .brand-tag{font-size:9px;white-space:normal}
+      .logo{width:102px}
+      .hero{padding:52px 0}
+      h1{font-size:38px}
+      .grid-3,.process,.trust-row,.form-grid{grid-template-columns:1fr}
+      .section{padding:54px 0}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <div class="page">
+    <div class="topbar">
+      <div class="container topbar-inner">
+        <div><span class="dot"></span>Central Valley based security surveillance</div>
+        <div>Remote monitoring available anywhere site access and response rules are available.</div>
+      </div>
+    </div>
+
+    <header class="nav">
+      <div class="container nav-inner">
+        <a class="brand" href="#">
+          <svg viewBox="0 0 420 180" class="logo" aria-label="COFOR logo">
+            <g>
+              <polygon points="130,92 210,38 210,66 154,104 154,126 130,110" style="transform-origin:170px 82px;animation:flipLeftTop 2.2s ease-in-out infinite" fill="#e5e7eb"/>
+              <polygon points="160,108 214,144 214,122 178,98 160,86" style="transform-origin:186px 114px;animation:flipLeftBottom 2.2s ease-in-out infinite" fill="#7fb0ea"/>
+              <polygon points="290,92 210,38 210,66 266,104 266,126 290,110" style="transform-origin:250px 82px;animation:flipRightTop 2.2s ease-in-out infinite" fill="#e5e7eb"/>
+              <polygon points="260,108 206,144 206,122 242,98 260,86" style="transform-origin:234px 114px;animation:flipRightBottom 2.2s ease-in-out infinite" fill="#7fb0ea"/>
+            </g>
+          </svg>
+          <div>
+            <div class="brand-name">COFOR</div>
+            <div class="brand-tag">Securing A Better Tomorrow</div>
+          </div>
+        </a>
+
+        <nav class="nav-links">
+          <a href="#services">What We Offer</a>
+          <a href="#where">Where We Offer It</a>
+          <a href="#support">Site Support</a>
+          <a href="#advantages">Advantages</a>
+          <a href="#contact" class="nav-cta">Site Review</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div>
+            <div class="eyebrow"><span class="dot"></span>Security first. Technology second.</div>
+            <h1>Remote security surveillance for the <span>Central Valley</span> and beyond.</h1>
+            <p>COFOR is a Central Valley based security surveillance company offering remote CCTV monitoring, mobile security equipment, deterrence support, incident reporting, and site coverage planning for commercial, industrial, agricultural, construction, retail, and high-risk properties.</p>
+            <p>The technology matters, but the service comes first: watch the property, verify activity, alert the right people, document the incident, and help the site become harder to target.</p>
+            <div class="actions">
+              <a class="btn btn-primary" href="#contact">Request a Security Review</a>
+              <a class="btn btn-secondary" href="#services">View Services</a>
+            </div>
+          </div>
+
+          <div class="hero-card">
+            <div class="image-box">
+              <div>
+                <div class="image-title">Hero Image Space</div>
+                <div class="image-sub">Add a real image here later: security trailer, monitoring operator, Central Valley business exterior, camera tower, or robotic security unit.</div>
+              </div>
+            </div>
+            <div class="trust-row">
+              <div class="trust"><strong>Central Valley</strong><span>Local service base</span></div>
+              <div class="trust"><strong>Remote</strong><span>CCTV review and alerts</span></div>
+              <div class="trust"><strong>Equipment</strong><span>Trailers, boxes, robots</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="services">
+        <div class="container">
+          <div class="section-head">
+            <div class="kicker">What We Offer</div>
+            <h2>Security services first. Equipment and technology behind it.</h2>
+            <p class="lead">COFOR offers the security work businesses actually need: watching risk areas, reviewing alerts, documenting incidents, supporting deterrence, and helping the property become harder to target.</p>
+          </div>
+
+          <div class="grid-3">
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Service Image</div></div><div class="slot-body"></div></div><h3>Remote CCTV Monitoring</h3><p>Remote operators review camera feeds for doors, gates, parking lots, yards, alleys, loading zones, equipment areas, and high-risk spaces.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Service Image</div></div><div class="slot-body"></div></div><h3>Verified Alert Review</h3><p>Camera alerts and activity are reviewed before escalation so clients are not buried in false alarms, useless motion alerts, or unclear footage.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Service Image</div></div><div class="slot-body"></div></div><h3>Incident Reporting</h3><p>COFOR documents what happened, when it happened, where it happened, what camera saw it, what action was taken, and what should improve.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Service Image</div></div><div class="slot-body"></div></div><h3>Deterrence Support</h3><p>When the site has the right equipment, warning audio, speaker talk-down, lights, sirens, or escalation can help stop activity before damage is done.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Service Image</div></div><div class="slot-body"></div></div><h3>Site Security Review</h3><p>COFOR reviews blind spots, lighting, gates, camera angles, access points, repeat activity, and where equipment should be placed.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Service Image</div></div><div class="slot-body"></div></div><h3>Escalation Workflow</h3><p>Each property needs clear rules: who gets called, when to notify management, when to use deterrence, and when emergency response is appropriate.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="where">
+        <div class="container">
+          <div class="section-head">
+            <div class="kicker">Where We Offer It</div>
+            <h2>Central Valley based. Remote coverage available wherever the site can be connected.</h2>
+            <p class="lead">COFOR is built for properties that need better visibility, stronger deterrence, and usable incident documentation. Local service is focused on Central Valley businesses. Remote monitoring can support properties outside the area when camera access, connectivity, equipment access, and response rules are available.</p>
+          </div>
+
+          <div class="grid-3">
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Property Image</div></div><div class="slot-body"></div></div><h3>Commercial Properties</h3><p>Office buildings, business parks, shopping centers, plazas, mixed-use properties, parking areas, walkways, exterior doors, and shared spaces.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Property Image</div></div><div class="slot-body"></div></div><h3>Retail & Storefronts</h3><p>Stores, restaurants, smoke shops, liquor stores, convenience stores, strip mall units, front doors, windows, alleys, and after-hours activity areas.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Property Image</div></div><div class="slot-body"></div></div><h3>Industrial & Warehouse Sites</h3><p>Warehouses, loading docks, roll-up doors, truck routes, storage yards, forklift zones, exterior lots, and access-control points.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Property Image</div></div><div class="slot-body"></div></div><h3>Agricultural Properties</h3><p>Ag yards, farms, packing areas, pump sites, rural gates, fuel tanks, equipment storage, remote roads, machinery areas, and outdoor storage zones.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Property Image</div></div><div class="slot-body"></div></div><h3>Construction & Temporary Sites</h3><p>Job sites, mobile offices, temporary fencing, trailers, material storage, tools, equipment, and sites that change as the project moves.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Property Image</div></div><div class="slot-body"></div></div><h3>Vehicle Lots & Yards</h3><p>Auto lots, mechanic shops, tow yards, truck yards, fleet parking, gated yards, storage lots, rear lots, and vehicle inventory areas.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Property Image</div></div><div class="slot-body"></div></div><h3>Campuses & Institutions</h3><p>Schools, churches, training centers, community facilities, office campuses, parking areas, courtyards, walkways, and after-hours exterior zones.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Property Image</div></div><div class="slot-body"></div></div><h3>High-Risk Problem Properties</h3><p>Properties dealing with repeated trespassing, dumping, theft, vandalism, loitering, break-ins, gate damage, or suspicious after-hours activity.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Property Image</div></div><div class="slot-body"></div></div><h3>Remote Multi-Site Properties</h3><p>Businesses with multiple locations can use remote monitoring review when cameras, site access, contact rules, and response procedures are in place.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="support">
+        <div class="container">
+          <div class="section-head">
+            <div class="kicker">How We Support the Site</div>
+            <h2>Use the cameras and equipment the property needs.</h2>
+            <p class="lead">COFOR can work around existing cameras or support additional equipment when the property needs more visibility. Equipment is not the whole business. Equipment is how the security service reaches the risk area.</p>
+          </div>
+
+          <div class="grid-3">
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Equipment Image</div></div><div class="slot-body"></div></div><h3>Existing Camera Systems</h3><p>If the property already has usable cameras, COFOR can review how those cameras fit into the remote monitoring and reporting workflow.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Equipment Image</div></div><div class="slot-body"></div></div><h3>Mobile Camera Coverage</h3><p>Camera towers, temporary camera setups, or mobile coverage can help with lots, yards, construction sites, and areas without strong fixed coverage.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Equipment Image</div></div><div class="slot-body"></div></div><h3>Security Trailers</h3><p>Trailer-based systems can support temporary locations, open properties, construction areas, equipment yards, and places without permanent infrastructure.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Equipment Image</div></div><div class="slot-body"></div></div><h3>Deterrence Devices</h3><p>Speaker boxes, warning audio, lights, sirens, and other deterrence equipment can support the response plan when installed at the site.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Equipment Image</div></div><div class="slot-body"></div></div><h3>Robotic Security Options</h3><p>K1-style robotic units can support visible security presence, communication, and monitored site coverage where appropriate.</p></div>
+            <div class="card"><div class="slot"><div class="slot-top"><div class="slot-label">Operator Image</div></div><div class="slot-body"></div></div><h3>Remote Operators + ENI</h3><p>Remote CCTV operators use ENI-supported review to move through feeds and alerts without relying on the old command-center monitor-wall model.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="advantages">
+        <div class="container">
+          <div class="section-head">
+            <div class="kicker">COFOR Advantages</div>
+            <h2>What makes COFOR different.</h2>
+            <p class="lead">COFOR is not guard-only, camera-only, or trailer-only. The advantage is the full remote security stack: local Central Valley focus, mobile equipment, remote CCTV operators, deterrence support, reports, and site improvement.</p>
+          </div>
+
+          <div class="comparison">
+            <div class="card old">
+              <h3>Old Guard / Command Center Model</h3>
+              <div class="list">
+                <div class="list-item"><span class="x">✗</span><div>More cost from guard hours, supervisors, fixed posts, and physical rooms.</div></div>
+                <div class="list-item"><span class="x">✗</span><div>More cameras often mean more screens, more hardware, and more command-center overhead.</div></div>
+                <div class="list-item"><span class="x">✗</span><div>Harder to scale for small businesses, temporary sites, agricultural properties, and multiple locations.</div></div>
+                <div class="list-item"><span class="x">✗</span><div>Camera-only systems may only record the problem after it already happened.</div></div>
+              </div>
+            </div>
+
+            <div class="card new">
+              <h3>COFOR Remote Security Model</h3>
+              <div class="list">
+                <div class="list-item"><span class="check">✓</span><div>Remote CCTV operators review activity without forcing every site into a large command center.</div></div>
+                <div class="list-item"><span class="check">✓</span><div>Mobile security equipment can be placed where risk exists.</div></div>
+                <div class="list-item"><span class="check">✓</span><div>ENI supports a leaner operator workflow with virtual screen space.</div></div>
+                <div class="list-item"><span class="check">✓</span><div>Reports, alerts, deterrence, and recommendations turn footage into usable security work.</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-3" style="margin-top:24px">
+            <div class="card"><div class="slot"><
